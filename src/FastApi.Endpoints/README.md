@@ -1,0 +1,1 @@
+Fast CRUD MinimalAPI endpoints with MinimalAPI usage
