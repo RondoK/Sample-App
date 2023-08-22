@@ -1,12 +1,13 @@
 using Api;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace Api.Tests.Fixtures;
 
 [Trait("Category", "Integration")]
-public class ApiTestFixture : IClassFixture<ApiWebApplicationFactory>
+public class ApiTestFixture : IClassFixture<ApiWebApplicationFactory>, IDisposable
 {
     protected readonly ApiWebApplicationFactory Factory;
     protected readonly HttpClient Api;
@@ -40,5 +41,10 @@ public class ApiTestFixture : IClassFixture<ApiWebApplicationFactory>
         });
         // if needed, reset the DB
         //_checkpoint.Reset(_factory.Configuration.GetConnectionString("SQL")).Wait();
+    }
+
+    public void Dispose()
+    {
+        SqliteConnection.ClearAllPools();
     }
 }
