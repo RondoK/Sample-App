@@ -39,6 +39,9 @@ public class ApiTestFixture : IClassFixture<ApiWebApplicationFactory>, IDisposab
             AllowAutoRedirect = false,
             HandleCookies = true
         });
+        using var context = GetScopedContext();
+        context.Database.EnsureDeleted();
+        context.Database.EnsureCreated();
         // if needed, reset the DB
         //_checkpoint.Reset(_factory.Configuration.GetConnectionString("SQL")).Wait();
     }
