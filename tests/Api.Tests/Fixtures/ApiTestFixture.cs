@@ -1,4 +1,5 @@
 using Api;
+using App.Data;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +31,11 @@ public class ApiTestFixture : IClassFixture<ApiWebApplicationFactory>, IDisposab
         return Factory.Services.CreateScope();
     }
 
+    public Context GetScopedContext()
+    {
+        return CreateScope().ServiceProvider.GetService<Context>()!;
+    }
+
     public ApiTestFixture(ApiWebApplicationFactory factory)
     {
         Factory = factory;
@@ -39,6 +45,9 @@ public class ApiTestFixture : IClassFixture<ApiWebApplicationFactory>, IDisposab
             AllowAutoRedirect = false,
             HandleCookies = true
         });
+        using var context = GetScopedContext();
+        context.Database.EnsureDeleted();
+        context.Database.EnsureCreated();
         // if needed, reset the DB
         //_checkpoint.Reset(_factory.Configuration.GetConnectionString("SQL")).Wait();
     }
