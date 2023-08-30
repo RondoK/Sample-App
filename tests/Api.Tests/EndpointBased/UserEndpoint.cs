@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Api.Tests.EndpointBased;
 
-public class UserEndpoint : ApiTestFixture
+public class UserEndpoint : ResetDbFixture
 {
     private const string Path = "/user";
 

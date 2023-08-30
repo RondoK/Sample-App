@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Api.Tests.TestEndpoints;
 
-public class MockedLoginTestFixture : ApiTestFixture
+public class MockedLoginTestFixture : ResetDbFixture
 {
     public MockedLoginTestFixture(ApiWebApplicationFactory factory) : base(factory)
     {

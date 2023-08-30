@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Api.Tests.EndpointBased.Aggregate;
 
-public class AggregateCrud : ApiTestFixture
+public class AggregateCrud : ResetDbFixture
 {
     private ApiWebApplicationFactory _factory;
     private const string Url = Paths.Aggs;

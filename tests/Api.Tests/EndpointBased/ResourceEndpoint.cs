@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Api.Tests.EndpointBased;
 
-public class ResourceEndpoint: ApiTestFixture
+public class ResourceEndpoint: ResetDbFixture
 {
     private const string Path = Paths.Resource;
 

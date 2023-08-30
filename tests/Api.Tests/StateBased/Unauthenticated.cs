@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Api.Tests.StateBased;
 
-public class Unauthenticated : ApiTestFixture
+public class Unauthenticated : ResetDbFixture
 {
     public Unauthenticated(ApiWebApplicationFactory factory) : base(factory)
     {

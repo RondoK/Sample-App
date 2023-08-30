@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Api.Tests.EndpointBased;
 
-public class LoginEndpoint : ApiTestFixture
+public class LoginEndpoint : ResetDbFixture
 {
     public LoginEndpoint(ApiWebApplicationFactory factory) : base(factory)
     {

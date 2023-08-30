@@ -1,9 +1,8 @@
-using Api;
 using Xunit;
 
 namespace Api.Tests.Fixtures;
 
-public class AuthenticatedFixture : ApiTestFixture, IAsyncLifetime
+public class AuthenticatedFixture : ResetDbFixture, IAsyncLifetime
 {
     private readonly string _authenticatedRole;
     public AuthenticatedFixture(ApiWebApplicationFactory factory, string authenticatedRole) : base(factory)
