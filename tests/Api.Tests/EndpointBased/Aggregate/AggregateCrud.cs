@@ -6,14 +6,15 @@ using Xunit;
 
 namespace Api.Tests.EndpointBased.Aggregate;
 
-public class AggregateCrud : ResetDbFixture
+public class AggregateCrud : ResetDbFixture, IClassFixture<ClientFixture>
 {
-    private ApiWebApplicationFactory _factory;
+    private readonly ClientFixture _server;
+    private HttpClient Api => _server.Api;
     private const string Url = Paths.Aggs;
 
-    public AggregateCrud(ApiWebApplicationFactory factory) : base(factory)
+    public AggregateCrud(ApiWebApplicationFactory factory, ClientFixture server) : base(factory)
     {
-        _factory = factory;
+        _server = server;
     }
 
     [Fact]

@@ -4,16 +4,18 @@ using Xunit;
 
 namespace Api.Tests.EndpointBased;
 
-public class LoginEndpoint : ResetDbFixture
+public class LoginEndpoint : NoCleaningFixture, IClassFixture<ClientFixture>
 {
-    public LoginEndpoint(ApiWebApplicationFactory factory) : base(factory)
+    private ClientFixture _server;
+    public LoginEndpoint(ApiWebApplicationFactory factory, ClientFixture server)
     {
+        _server = server;
     }
 
     [Fact]
     public async Task ReturnsCookie()
     {
-        var result = await Login();
+        var result = await _server.Login();
         await result.ShouldBeOk();
         result.CookieHeaders().Should().NotBeEmpty("Expected cookie response");
     }
