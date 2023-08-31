@@ -3,15 +3,17 @@ using Xunit;
 
 namespace Api.Tests.StateBased;
 
-public class Unauthenticated : ApiTestFixture
+public class Unauthenticated: NoCleaningFixture, IClassFixture<ClientFixture>
 {
-    public Unauthenticated(ApiWebApplicationFactory factory) : base(factory)
+    private readonly ClientFixture _server;
+    public Unauthenticated(ApiWebApplicationFactory factory, ClientFixture server)
     {
+        _server = server;
     }
 
     [Theory]
     [MemberData(nameof(PathsList))]
-    public Task Route_IsRedirected(string path) => Api.GetAndCheckRedirected(path);
+    public Task Route_IsRedirected(string path) => _server.Api.GetAndCheckRedirected(path);
 
     public static IEnumerable<object[]> PathsList => new List<object[]>
     {

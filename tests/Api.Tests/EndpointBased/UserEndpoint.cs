@@ -5,18 +5,20 @@ using Xunit;
 
 namespace Api.Tests.EndpointBased;
 
-public class UserEndpoint : ApiTestFixture
+public class UserEndpoint : NoCleaningFixture, IClassFixture<ClientFixture>
 {
+    private readonly ClientFixture _server;
     private const string Path = "/user";
 
-    public UserEndpoint(ApiWebApplicationFactory factory) : base(factory)
+    public UserEndpoint(ApiWebApplicationFactory factory, ClientFixture server)
     {
+        _server = server;
     }
 
     [Fact]
     public async Task ReturnsOk()
     {
-        var result = await Api.GetAsync(Path);
+        var result = await _server.Api.GetAsync(Path);
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }
