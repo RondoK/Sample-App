@@ -2,6 +2,7 @@
   "ConnectionStrings": {
     "Sqlite": "DataSource=file:sqlite?mode=memory&cache=shared"
   },
+  "DbProvider": "Sqlite",
   "Logging": {
     "LogLevel": {
       "Default": "Debug",

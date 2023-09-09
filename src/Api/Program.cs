@@ -27,23 +27,36 @@ public static class ApiBuilder
         builder.Services.AddSwaggerGen();
         builder.Services.AddAuthentication(o => o.DefaultScheme = CookieScheme)
             .AddCookie(CookieScheme);
-        AddSqlLiteContext(builder.Services, builder.Configuration.GetConnectionString("Sqlite") ?? throw new Exception("No connection string"));
+        builder.AddEfContext();
         builder.Services.AddScoped<DbContext, Context>();
         builder.Services.AddAuthorizationBuilder()
             .AddPolicy(Roles.Admin, policy => policy.RequireRole(Roles.Admin));
 
-        builder.Services.AddSingleton<IConfigureModelCreating>(new ConfigureSqlite());
-        
         return builder;
     }
 
-    public static IServiceCollection AddSqlLiteContext(IServiceCollection service, string connectionString)
+    private static void AddEfContext(this WebApplicationBuilder builder)
     {
-        return service.AddDbContext<Context>(o =>
-            o.UseSqlite(connectionString,
-                c => c.MigrationsAssembly("App.Data.Sqlite"))
-        );
-    } 
+        var factory = GetParamsFactory(builder.Configuration);
+        builder.Services.AddSingleton<IConfigureModelCreating>(factory.CreateModelCreatingOptions());
+        builder.Services.AddDbContext<DbContext,Context>(factory.BuildOptionsDelegate());
+    }
+
+    private static IEfContextParamsFactory GetParamsFactory(IConfiguration configuration)
+    {
+        var provider = configuration.GetValue("DbProvider", "Sqlite");
+        if (provider == null)
+            throw new Exception("Missing config parameter DbProvider");
+        var connectionString = configuration.GetConnectionString(provider);
+        if (connectionString == null)
+            throw new Exception("Missing connection string named " + provider);
+        
+        return provider switch
+        {
+            "Sqlite" => new SqliteContextParamsFactory(connectionString),
+            _ => throw new Exception($"Unsupported provider: {provider}")
+        };
+    }
 
     public static WebApplication ConfigureMiddleware(WebApplication app)
     {

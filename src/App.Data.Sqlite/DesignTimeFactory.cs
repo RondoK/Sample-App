@@ -1,37 +1,17 @@
-using App.Data.Sqlite.Configurations;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.EntityFrameworkCore.Internal;
-
 namespace App.Data.Sqlite;
 
-/*
-public class DesignTimeFactory : DbContextFactory<Context>, IConfigureModelCreating //IDesignTimeDbContextFactory<DbContext>, IConfigureModelCreating
+/// <summary>
+/// Allows run ef tools, "ef migrations" and "ef database".
+/// Accepts "-c" or "--connectionString" parameter.
+/// Examples :
+/// - dotnet ef migrations add New --project App.Data.Sqlite -- -c "DataSource=../Api/app.db"
+/// - dotnet ef database update --project App.Data.Sqlite -- -c "DataSource=../Api/app.db"
+/// </summary>
+public class DesignTimeFactory : DefaultDesignTimeFactory
 {
-    public DbContext CreateDbContext(string[] args)
-    {
-        var optionsBuilder = new DbContextOptionsBuilder<DbContext>();
-        optionsBuilder.UseSqlite("Data Source=app.db", o => o.MigrationsAssembly("App.Data.Sqlite"));
+    private const string DefaultConnectionString = "DataSource=../Api/app.db";
 
-        return new Context(optionsBuilder.Options);
-    }
-    public void OnModelCreating(ModelBuilder modelBuilder)
+    public DesignTimeFactory() : base(DefaultConnectionString, new SqliteContextParamsFactory(DefaultConnectionString))
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(DesignTimeFactory).Assembly);
-    }
-
-    public DesignTimeFactory(IServiceProvider serviceProvider, DbContextOptions<Context> options, IDbContextFactorySource<Context> factorySource) 
-        : base(serviceProvider, options, factorySource)
-    {
-    }
-}
-*/
-
-
-public class ConfigureSqlite : IConfigureModelCreating
-{
-    public void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AggConfiguration).Assembly);
     }
 }
