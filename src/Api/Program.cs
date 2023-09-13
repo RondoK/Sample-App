@@ -27,7 +27,7 @@ public static class ApiBuilder
         builder.Services.AddSwaggerGen();
         builder.Services.AddAuthentication(o => o.DefaultScheme = CookieScheme)
             .AddCookie(CookieScheme);
-        AddSqlLiteContext(builder.Services, "Data Source=app.db");
+        AddSqlLiteContext(builder.Services, builder.Configuration.GetConnectionString("Sqlite") ?? throw new Exception("No connection string"));
         builder.Services.AddScoped<DbContext, Context>();
         builder.Services.AddAuthorizationBuilder()
             .AddPolicy(Roles.Admin, policy => policy.RequireRole(Roles.Admin));

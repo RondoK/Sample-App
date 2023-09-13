@@ -1,3 +1,4 @@
+using System.Data.Common;
 using App.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -13,20 +14,10 @@ public class ApiWebApplicationFactory : WebApplicationFactory<TestProgram>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureAppConfiguration(config =>
-        {
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile("testsettings.json")
-                .Build();
-
-            config.AddConfiguration(configuration);
-        });
-        
-        // Register services 
-
-        builder.ConfigureTestServices(serviceCollection => 
-            ApiBuilder.AddSqlLiteContext(serviceCollection, "DataSource=:memory:"));
-
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("testsettings.json")
+            .Build();
+        builder.UseConfiguration(configuration);
     }
     
     public IServiceScope CreateScope()
