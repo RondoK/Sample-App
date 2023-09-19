@@ -2,6 +2,7 @@ using Api;
 using Api.Endpoints;
 using App.Data;
 using App.Data.Sqlite;
+using App.Data.SqlServer;
 using Microsoft.EntityFrameworkCore;
 
 ApiBuilder.CreateApp(args).Run();
@@ -54,6 +55,7 @@ public static class ApiBuilder
         return provider switch
         {
             "Sqlite" => new SqliteContextParamsFactory(connectionString),
+            "SqlServer" => new SqlServerContextParamsFactory(connectionString),
             _ => throw new Exception($"Unsupported provider: {provider}")
         };
     }
