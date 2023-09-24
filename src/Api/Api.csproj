@@ -14,6 +14,7 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     </ItemGroup>
 
@@ -25,16 +26,11 @@
 
     <ItemGroup>
       <ProjectReference Include="..\App.Data.Sqlite\App.Data.Sqlite.csproj" />
+      <ProjectReference Include="..\App.Data.SqlServer\App.Data.SqlServer.csproj" />
       <ProjectReference Include="..\App.Data\App.Data.csproj" />
       <ProjectReference Include="..\App.Services\App.Services.csproj" />
       <ProjectReference Include="..\FastApi.Endpoints\FastApi.Endpoints.csproj" />
       <ProjectReference Include="..\FastApi.EF\FastApi.EF.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Update="app.db">
-        <DependentUpon>appsettings.json</DependentUpon>
-      </None>
     </ItemGroup>
 
     <ItemGroup>
