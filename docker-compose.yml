@@ -1,0 +1,29 @@
+version: '3.4'
+
+services:
+  api:
+    image: ${DOCKER_REGISTRY-}api
+    ports:
+      - "8080:80"
+      - "8081:443"
+    build:
+      context: .
+      dockerfile: src/Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    depends_on:
+      - db
+    volumes:
+      - ~/.aspnet/https:/https:ro
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - app-postgres:/var/lib/postgresql/data postgres
+volumes:
+  app-postgres:
