@@ -1,6 +1,7 @@
 using Api;
 using Api.Endpoints;
 using App.Data;
+using App.Data.Postgres;
 using App.Data.Sqlite;
 using App.Data.SqlServer;
 using Microsoft.EntityFrameworkCore;
@@ -56,6 +57,7 @@ public static class ApiBuilder
         {
             "Sqlite" => new SqliteContextParamsFactory(connectionString),
             "SqlServer" => new SqlServerContextParamsFactory(connectionString),
+            "Postgres" => new PostgresContextParamsFactory(connectionString),
             _ => throw new Exception($"Unsupported provider: {provider}")
         };
     }

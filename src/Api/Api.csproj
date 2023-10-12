@@ -29,6 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\App.Data.Postgres\App.Data.Postgres.csproj" />
       <ProjectReference Include="..\App.Data.Sqlite\App.Data.Sqlite.csproj" />
       <ProjectReference Include="..\App.Data.SqlServer\App.Data.SqlServer.csproj" />
       <ProjectReference Include="..\App.Data\App.Data.csproj" />
