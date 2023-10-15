@@ -6,7 +6,17 @@ using App.Data.Sqlite;
 using App.Data.SqlServer;
 using Microsoft.EntityFrameworkCore;
 
-ApiBuilder.CreateApp(args).Run();
+var host = ApiBuilder.CreateApp(args);
+//TODO: ms suggests not to use this approach in prod.
+//Quote: Carefully consider before using this approach in production. Experience has shown that the simplicity of this deployment strategy is outweighed by the issues it creates. Consider generating SQL scripts from migrations instead.
+//Source: https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/applying?tabs=dotnet-core-cli
+using (var scope = host.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<Context>();
+    db.Database.Migrate();
+}
+host.Run();
+
 
 public static class ApiBuilder
 {
@@ -65,7 +75,7 @@ public static class ApiBuilder
     public static WebApplication ConfigureMiddleware(WebApplication app)
     {
         // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
+        //if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
