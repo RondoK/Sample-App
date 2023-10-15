@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  api:
+    image: ${DOCKER_REGISTRY-}api
+    build:
+      context: .
+      dockerfile: src/Api/Dockerfile
+    depends_on:
+      - db
+    volumes:
+      - ~/.aspnet/https:/https:ro
+  db:
+    image: postgres
+    volumes:
+      - app-postgres:/var/lib/postgresql/data postgres
+volumes:
+  app-postgres:
