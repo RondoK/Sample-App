@@ -1,8 +1,9 @@
 {
   "ConnectionStrings": {
+    "Postgres": "Server=localhost;Port=5555;Database=the_app;User Id=postgres;Password=mysecretpassword;",
     "Sqlite": "DataSource=file:sqlite?mode=memory&cache=shared"
   },
-  "DbProvider": "Sqlite",
+  "DbProvider": "Postgres",
   "Logging": {
     "LogLevel": {
       "Default": "Debug",
