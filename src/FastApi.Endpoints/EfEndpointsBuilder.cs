@@ -38,7 +38,10 @@ public static class EfEndpointsBuilder
         var inner = outer.MapGroup("/{id}");
         inner.MapGet("", ([FromServices] DbContext context, int id) => context.FindNoTrackingAsync<T>(id));
         inner.MapPut("",
-            ([FromServices] DbContext context, int id, [FromBody] T entity) => context.SaveUpdateAsync(entity));
+            ([FromServices] DbContext context,
+                //TODO: check id mismatch between url id and body id
+                int id, 
+                [FromBody] T entity) => context.SaveUpdateAsync(entity));
         return inner;
     }
 }

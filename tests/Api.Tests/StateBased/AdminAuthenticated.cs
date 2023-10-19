@@ -8,7 +8,7 @@ public class AdminAuthenticated : NoCleaningFixture, IClassFixture<Authenticated
 {
     private Authenticated<RoleClass.Admin> _server;
     private HttpClient Api => _server.Api;
-    public AdminAuthenticated(ApiWebApplicationFactory factory, Authenticated<RoleClass.Admin> server)
+    public AdminAuthenticated(Authenticated<RoleClass.Admin> server)
     {
         _server = server;
     }

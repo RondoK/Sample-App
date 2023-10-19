@@ -5,6 +5,11 @@ namespace FastApi.EF.Tests.Seeds;
 
 public class DbSeed : IEfCoreSeed
 {
+    public DbSeed()
+    {
+        Aggs = Array.Empty<Agg>();
+    }
+
     public Agg[] Aggs { get; private set; }
 
     private static Agg[] GetAggs()

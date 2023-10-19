@@ -6,8 +6,8 @@ namespace Api.Tests.EndpointBased;
 
 public class LoginEndpoint : NoCleaningFixture, IClassFixture<ClientFixture>
 {
-    private ClientFixture _server;
-    public LoginEndpoint(ApiWebApplicationFactory factory, ClientFixture server)
+    private readonly ClientFixture _server;
+    public LoginEndpoint(ClientFixture server)
     {
         _server = server;
     }

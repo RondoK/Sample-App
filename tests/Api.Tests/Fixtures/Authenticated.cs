@@ -7,7 +7,6 @@ public class Authenticated<T> : ClientFixture, IAsyncLifetime where T : struct, 
 {
     public Authenticated(ApiWebApplicationFactory factory) : base(factory)
     {
-        this._factory = factory;
     }
 
     public async Task InitializeAsync()

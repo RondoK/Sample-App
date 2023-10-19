@@ -10,7 +10,7 @@ public class UserEndpoint : NoCleaningFixture, IClassFixture<ClientFixture>
     private readonly ClientFixture _server;
     private const string Path = "/user";
 
-    public UserEndpoint(ApiWebApplicationFactory factory, ClientFixture server)
+    public UserEndpoint(ClientFixture server)
     {
         _server = server;
     }

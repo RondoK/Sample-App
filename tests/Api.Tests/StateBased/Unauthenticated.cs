@@ -6,7 +6,7 @@ namespace Api.Tests.StateBased;
 public class Unauthenticated: NoCleaningFixture, IClassFixture<ClientFixture>
 {
     private readonly ClientFixture _server;
-    public Unauthenticated(ApiWebApplicationFactory factory, ClientFixture server)
+    public Unauthenticated(ClientFixture server)
     {
         _server = server;
     }

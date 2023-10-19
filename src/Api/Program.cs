@@ -50,7 +50,7 @@ public static class ApiBuilder
     private static void AddEfContext(this WebApplicationBuilder builder)
     {
         var factory = GetParamsFactory(builder.Configuration);
-        builder.Services.AddSingleton<IConfigureModelCreating>(factory.CreateModelCreatingOptions());
+        builder.Services.AddSingleton(factory.CreateModelCreatingOptions());
         builder.Services.AddDbContext<DbContext,Context>(factory.BuildOptionsDelegate());
     }
 
