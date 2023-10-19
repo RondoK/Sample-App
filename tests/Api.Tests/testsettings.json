@@ -2,7 +2,7 @@
   "ConnectionStrings": {
     "Sqlite": "DataSource=file:sqlite?mode=memory&cache=shared"
   },
-  "DbProvider": "Sqlite",
+  "DbProvider": "Postgres",
   "Logging": {
     "LogLevel": {
       "Default": "Debug",
