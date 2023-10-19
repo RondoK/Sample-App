@@ -22,6 +22,7 @@ public class Agg : IEquatable<Agg>
 
     public override int GetHashCode()
     {
+        // ReSharper disable once NonReadonlyMemberInGetHashCode
         return Id;
     }
 

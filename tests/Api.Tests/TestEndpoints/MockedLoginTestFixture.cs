@@ -6,8 +6,8 @@ namespace Api.Tests.TestEndpoints;
 
 public class MockedLoginTestFixture : NoCleaningFixture, IClassFixture<ClientFixture>
 {
-    private ClientFixture _server;
-    public MockedLoginTestFixture(ApiWebApplicationFactory factory, ClientFixture server)
+    private readonly ClientFixture _server;
+    public MockedLoginTestFixture(ClientFixture server)
     {
         _server = server;
     }

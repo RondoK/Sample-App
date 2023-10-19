@@ -8,6 +8,7 @@
         <UserSecretsId>54a55043-ec7b-4307-85b8-08a05a86a3ed</UserSecretsId>
         <DockerfileContext>..\..</DockerfileContext>
         <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+        <GenerateProgramFile>false</GenerateProgramFile>
     </PropertyGroup>
 
     <ItemGroup>

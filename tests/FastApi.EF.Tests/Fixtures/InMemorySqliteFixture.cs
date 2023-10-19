@@ -6,7 +6,7 @@ namespace FastApi.EF.Tests.Fixtures;
 
 public class InMemorySqliteFixture : IDbContextFixture
 {
-    private static int _dbNo = 0;
+    private static int _dbNo;
     private static readonly object LockObj = new();
     //private const string _connectionString = "DataSource=file::memory:?cache=shared";
     private readonly DbContextOptions _options;

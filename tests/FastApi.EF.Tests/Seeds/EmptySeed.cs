@@ -7,6 +7,11 @@ public class EmptySeed : IEfCoreSeed
 {
     public Agg[] Aggs { get; }
 
+    public EmptySeed()
+    {
+        Aggs = Array.Empty<Agg>();
+    }
+
     public Task Seed(Context context)
     {
         return Task.CompletedTask;

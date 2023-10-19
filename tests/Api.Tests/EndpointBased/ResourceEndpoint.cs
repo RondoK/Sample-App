@@ -7,7 +7,7 @@ namespace Api.Tests.EndpointBased;
 public class ResourceEndpoint: NoCleaningFixture, IClassFixture<ClientFixture>
 {
     private const string Path = Paths.Resource;
-    private ClientFixture _server;
+    private readonly ClientFixture _server;
 
     [Fact]
     public async Task Authenticated_Ok()
@@ -18,7 +18,7 @@ public class ResourceEndpoint: NoCleaningFixture, IClassFixture<ClientFixture>
         (await result.Content.ReadAsStringAsync()).Should().Be("ok");
     }
 
-    public ResourceEndpoint(ApiWebApplicationFactory factory, ClientFixture server)
+    public ResourceEndpoint(ClientFixture server)
     {
         _server = server;
     }

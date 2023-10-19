@@ -1,5 +1,4 @@
 using FluentAssertions;
-using FastApi.EF;
 using FastApi.EF.Tests.Fixtures;
 using FastApi.EF.Tests.Models;
 using FastApi.EF.Tests.Seeds;

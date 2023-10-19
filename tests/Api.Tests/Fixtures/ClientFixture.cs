@@ -5,11 +5,9 @@ namespace Api.Tests.Fixtures;
 public class ClientFixture
 {
     public readonly HttpClient Api;
-    protected ApiWebApplicationFactory _factory;
     
     public ClientFixture(ApiWebApplicationFactory factory)
     {
-        _factory = factory;
         Api = factory.CreateClient(new WebApplicationFactoryClientOptions()
         {
             //TODO : Figure out what for https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-6.0#mock-authentication

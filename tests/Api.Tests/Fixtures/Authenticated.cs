@@ -5,11 +5,8 @@ namespace Api.Tests.Fixtures;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class Authenticated<T> : ClientFixture, IAsyncLifetime where T : struct, IRole
 {
-    private readonly ApiWebApplicationFactory _factory;
-
     public Authenticated(ApiWebApplicationFactory factory) : base(factory)
     {
-        this._factory = factory;
     }
 
     public async Task InitializeAsync()

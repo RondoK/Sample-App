@@ -1,15 +1,20 @@
 using System.Security.Claims;
-using Api.Tests;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-TestApi.CreateApp(args).Run();
+namespace Api.Tests;
 
-public static class TestApi
+public class TestProgram
 {
-    public static WebApplication CreateApp(params string[] args)
+    public static Task Main(string[] args)
+    {
+        CreateApp(args).Run();
+        return Task.CompletedTask;
+    }
+
+    private static WebApplication CreateApp(params string[] args)
     {
         // For some reasons Rider passes old path for the project
         var envParams = args.Where(a => !a.Contains("--contentRoot")).ToArray();
@@ -26,7 +31,10 @@ public static class TestApi
         });
         return app;
     }
+}
 
+public static class Extensions
+{
     public static async Task<HttpResponseMessage> MockedLogin(this HttpClient client, params string[] roles)
     {
         //TODO : find prettier way pass query params 
@@ -34,8 +42,4 @@ public static class TestApi
                    string.Concat(roles.Skip(1).Select(r => "&" + r).Prepend(roles.First()).Prepend("?roles="));
         return await client.GetAsync(path);
     }
-}
-
-public partial class TestProgram
-{
 }
