@@ -16,12 +16,11 @@ COPY ["src/App.Services/App.Services.csproj", "App.Services/"]
 COPY ["src/FastApi.Endpoints/FastApi.Endpoints.csproj", "FastApi.Endpoints/"]
 COPY ["src/FastApi.EF/FastApi.EF.csproj", "FastApi.EF/"]
 RUN dotnet restore "Api/Api.csproj"
-COPY . .
-WORKDIR "src/Api"
-RUN dotnet build "Api.csproj" -c Release -o /app/build
+COPY ./src .
+RUN dotnet build "Api/Api.csproj" -c Release -o /app/build --no-restore
 
 FROM build AS publish
-RUN dotnet publish "Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Api/Api.csproj" -c Release -o /app/publish /p:UseAppHost=false --no-restore
 
 FROM base AS final
 WORKDIR /app
