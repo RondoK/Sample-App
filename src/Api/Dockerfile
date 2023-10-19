@@ -9,6 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["src/Api/Api.csproj", "Api/"]
 COPY ["src/App.Data.Sqlite/App.Data.Sqlite.csproj", "App.Data.Sqlite/"]
+COPY ["src/App.Data.Postgres/App.Data.Postgres.csproj", "App.Data.Postgres/"]
 COPY ["src/App.Data/App.Data.csproj", "App.Data/"]
 COPY ["src/App.Data.SqlServer/App.Data.SqlServer.csproj", "App.Data.SqlServer/"]
 COPY ["src/App.Services/App.Services.csproj", "App.Services/"]
