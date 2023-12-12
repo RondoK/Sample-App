@@ -1,40 +1,40 @@
-using System.Net.Http.Json;
+using System.Diagnostics.CodeAnalysis;
 using Api.Tests.Fixtures;
 using App.Data.Models;
-using FastApi.Endpoints;
 using FluentAssertions;
 using Xunit;
 
 namespace Api.Tests.EndpointBased.Aggregate;
 
+[SuppressMessage("Usage", "xUnit1033:Test classes decorated with \'Xunit.IClassFixture<TFixture>\' or \'Xunit.ICollectionFixture<TFixture>\' should add a constructor argument of type TFixture")]
 public class AggregateCrud : ResetDbFixture, IClassFixture<ClientFixture>
 {
-    private readonly ClientFixture _server;
-    private HttpClient Api => _server.Api;
-    private const string Url = Paths.Aggs;
-    private readonly EndpointsRequestUri _endpointsUri = new(Url);
+    private readonly ClientFixture _fixture;
+    private readonly EndpointsGroup<Agg> _server;
 
-    public AggregateCrud(ApiWebApplicationFactory factory, ClientFixture server) : base(factory)
+    public AggregateCrud(ClientFixture fixture, ApiWebApplicationFactory factory) : base(factory)
     {
-        _server = server;
+        _fixture = fixture;
+        _server = fixture.GetDefaultEndpoints<Agg>(Paths.Aggs)!;
     }
 
     [Fact]
     public async Task AddNew_ReturnsSameObjWithNewId()
     {
         var fromClient = ValidNewAggRequest();
-        var createdAgg = await CreateAgg(fromClient);
+        var createdAgg = await _server.Create(fromClient);
 
         createdAgg.Should().NotBeNull();
         createdAgg.Id.Should().NotBe(fromClient.Id);
-        createdAgg.Should().BeEquivalentTo(fromClient, o => o.Excluding(agg => agg.Id).ComparingByMembers<Agg>());
+        createdAgg.Should().BeEquivalentTo(fromClient, o => o.Excluding(agg => agg.Id)
+            .ComparingByMembers<Agg>());
     }
 
     [Fact]
     public async Task AddNew_CanBeRetrievedById()
     {
-        var created = await CreateAgg(ValidNewAggRequest());
-        var retrieved = await Api.GetFromJsonAsync<Agg>(_endpointsUri.GetById(created.Id));
+        var created = await _server.Create(ValidNewAggRequest());
+        var retrieved = await _server.GetById(created.Id); 
 
         retrieved.Should().BeEquivalentTo(created);
     }
@@ -42,8 +42,8 @@ public class AggregateCrud : ResetDbFixture, IClassFixture<ClientFixture>
     [Fact]
     public async Task AddNew_CanBeRetrievedInList()
     {
-        var created = await CreateAgg(ValidNewAggRequest());
-        var retrieved = await Api.GetFromJsonAsync<Agg[]>(_endpointsUri.GetAll());
+        var created = await _server.Create(ValidNewAggRequest());
+        var retrieved = await _server.GetAll();
 
         retrieved.Should().Contain(created);
     }
@@ -52,27 +52,12 @@ public class AggregateCrud : ResetDbFixture, IClassFixture<ClientFixture>
     public async Task AddNew_CanBeRetrievedInPaged()
     {
         const int pageSize = 5;
-        var created = await CreateAgg(ValidNewAggRequest());
-        int neededPage = (created.Id / pageSize) + 1;
-        var retrieved = await Api.GetFromJsonAsync<Agg[]>(_endpointsUri.GetPaged(neededPage, pageSize));
-
+        var created = await _server.Create(ValidNewAggRequest());
+        var page = (created.Id / pageSize) + 1;
+        var retrieved = await _server.GetPaged(page, pageSize);
         retrieved.Should().NotBeEmpty();
         retrieved.Should().Contain(created);
     }
-
-    private async Task<Agg> CreateAgg(Agg request)
-    {
-        var addResponse = await Api.PostAsJsonAsync(Url, request);
-        if (!addResponse.IsSuccessStatusCode)
-            throw new Exception(
-                $"Failed to create an item, response has status code {addResponse.StatusCode}.\nAnd body: " +
-                await addResponse.Content.ReadAsStringAsync());
-        var result = await addResponse.Content.ReadFromJsonAsync<Agg>();
-        if (result == null)
-            throw new Exception("Failed to create an item, response can't be casted");
-        return result;
-    }
-
 
     private static Agg ValidNewAggRequest()
     {
