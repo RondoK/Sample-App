@@ -19,15 +19,8 @@ public class EndpointsGroup<T>
 
     public async Task<T> Create(T request)
     {
-        var addResponse = await _api.PostAsJsonAsync(_baseUri, request);
-        if (!addResponse.IsSuccessStatusCode)
-            throw new Exception(
-                $"Failed to create an item, response has status code {addResponse.StatusCode}.\nAnd body: " +
-                await addResponse.Content.ReadAsStringAsync());
-        var result = await addResponse.Content.ReadFromJsonAsync<T>();
-        if (result == null)
-            throw new Exception("Failed to create an item, response can't be casted");
-        return result;
+        var response = await _api.PostAsJsonAsync(_baseUri, request);
+        return await GetBodyOrException(response);
     }
 
     public async Task<T?> GetById<TId>(TId id)
@@ -44,11 +37,29 @@ public class EndpointsGroup<T>
     {
         return await _api.GetFromJsonAsync<Agg[]>(_endpointsUri.GetPaged(page, pageSize));
     }
-}
+
+    public async Task<T> Update(T updated)
+    {
+        var response = await _api.PutAsJsonAsync(_baseUri, updated);
+        return await GetBodyOrException(response);
+    }
+
+    private async Task<T> GetBodyOrException(HttpResponseMessage response)
+    {
+        if (!response.IsSuccessStatusCode)
+            throw new Exception(
+                $"Failed to create an item, response has status code {response.StatusCode}.\nAnd body: " +
+                await response.Content.ReadAsStringAsync());
+        var result = await response.Content.ReadFromJsonAsync<T>();
+        if (result == null)
+            throw new Exception("Failed to create an item, response can't be casted");
+        return result;
+    }
+ }
 
 public static class EndpointsGroupExtension
 {
-    public static  EndpointsGroup<T> GetDefaultEndpoints<T>(this ClientFixture fixture, string baseUri)
+    public static EndpointsGroup<T> GetDefaultEndpoints<T>(this ClientFixture fixture, string baseUri)
     {
         return new EndpointsGroup<T>(baseUri, fixture.Api);
     }

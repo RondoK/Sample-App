@@ -6,7 +6,8 @@ using Xunit;
 
 namespace Api.Tests.EndpointBased.Aggregate;
 
-[SuppressMessage("Usage", "xUnit1033:Test classes decorated with \'Xunit.IClassFixture<TFixture>\' or \'Xunit.ICollectionFixture<TFixture>\' should add a constructor argument of type TFixture")]
+[SuppressMessage("Usage",
+    "xUnit1033:Test classes decorated with \'Xunit.IClassFixture<TFixture>\' or \'Xunit.ICollectionFixture<TFixture>\' should add a constructor argument of type TFixture")]
 public class AggregateCrud : ResetDbFixture, IClassFixture<ClientFixture>
 {
     private readonly ClientFixture _fixture;
@@ -15,7 +16,7 @@ public class AggregateCrud : ResetDbFixture, IClassFixture<ClientFixture>
     public AggregateCrud(ClientFixture fixture, ApiWebApplicationFactory factory) : base(factory)
     {
         _fixture = fixture;
-        _server = fixture.GetDefaultEndpoints<Agg>(Paths.Aggs)!;
+        _server = fixture.GetDefaultEndpoints<Agg>(Paths.Aggs);
     }
 
     [Fact]
@@ -34,7 +35,7 @@ public class AggregateCrud : ResetDbFixture, IClassFixture<ClientFixture>
     public async Task AddNew_CanBeRetrievedById()
     {
         var created = await _server.Create(ValidNewAggRequest());
-        var retrieved = await _server.GetById(created.Id); 
+        var retrieved = await _server.GetById(created.Id);
 
         retrieved.Should().BeEquivalentTo(created);
     }
@@ -57,6 +58,22 @@ public class AggregateCrud : ResetDbFixture, IClassFixture<ClientFixture>
         var retrieved = await _server.GetPaged(page, pageSize);
         retrieved.Should().NotBeEmpty();
         retrieved.Should().Contain(created);
+    }
+
+    [Fact]
+    public async Task Update()
+    {
+        var toCreate = ValidNewAggRequest();
+        var toUpdate = await _server.Create(toCreate);
+        toUpdate.Text += " CHANGED";
+
+        var updatedResponse = await _server.Update(toUpdate);
+        var loaded = await _server.GetById(toUpdate.Id);
+
+        updatedResponse.Should().BeEquivalentTo(toUpdate);
+        loaded.Should().BeEquivalentTo(updatedResponse);
+        
+        updatedResponse.Text.Should().NotBe(toCreate.Text);
     }
 
     private static Agg ValidNewAggRequest()
