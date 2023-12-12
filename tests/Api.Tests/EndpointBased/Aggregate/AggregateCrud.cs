@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using Api.Tests.Fixtures;
 using App.Data.Models;
+using FastApi.Endpoints;
 using FluentAssertions;
 using Xunit;
 
@@ -11,6 +12,7 @@ public class AggregateCrud : ResetDbFixture, IClassFixture<ClientFixture>
     private readonly ClientFixture _server;
     private HttpClient Api => _server.Api;
     private const string Url = Paths.Aggs;
+    private readonly EndpointsRequestUri _endpointsUri = new(Url);
 
     public AggregateCrud(ApiWebApplicationFactory factory, ClientFixture server) : base(factory)
     {
@@ -32,7 +34,7 @@ public class AggregateCrud : ResetDbFixture, IClassFixture<ClientFixture>
     public async Task AddNew_CanBeRetrievedById()
     {
         var created = await CreateAgg(ValidNewAggRequest());
-        var retrieved = await Api.GetFromJsonAsync<Agg>(Url + $"/{created.Id}");
+        var retrieved = await Api.GetFromJsonAsync<Agg>(_endpointsUri.GetById(created.Id));
 
         retrieved.Should().BeEquivalentTo(created);
     }
@@ -41,7 +43,7 @@ public class AggregateCrud : ResetDbFixture, IClassFixture<ClientFixture>
     public async Task AddNew_CanBeRetrievedInList()
     {
         var created = await CreateAgg(ValidNewAggRequest());
-        var retrieved = await Api.GetFromJsonAsync<Agg[]>(Url + "/all");
+        var retrieved = await Api.GetFromJsonAsync<Agg[]>(_endpointsUri.GetAll());
 
         retrieved.Should().Contain(created);
     }
@@ -52,7 +54,7 @@ public class AggregateCrud : ResetDbFixture, IClassFixture<ClientFixture>
         const int pageSize = 5;
         var created = await CreateAgg(ValidNewAggRequest());
         int neededPage = (created.Id / pageSize) + 1;
-        var retrieved = await Api.GetFromJsonAsync<Agg[]>(Url + $"?page={neededPage}&pageSize={pageSize}");
+        var retrieved = await Api.GetFromJsonAsync<Agg[]>(_endpointsUri.GetPaged(neededPage, pageSize));
 
         retrieved.Should().NotBeEmpty();
         retrieved.Should().Contain(created);
