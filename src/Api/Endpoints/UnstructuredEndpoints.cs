@@ -30,7 +30,7 @@ public static class UnstructuredEndpoints
         // use case: Add version to an api 
         //var routes = app.MapGroup("v1");
         var routes = app;
-        routes.MapGroupAndSingleActions<Agg>(Paths.Aggs); //.RequireAuthorization();
+        routes.MapGroupAndSingleActions<Agg, int>(Paths.Aggs); //.RequireAuthorization();
 
     }
 }

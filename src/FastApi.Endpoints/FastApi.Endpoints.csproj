@@ -14,4 +14,8 @@
         <ProjectReference Include="..\FastApi.EF\FastApi.EF.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="SystemTextJsonPatch" Version="3.1.0" />
+    </ItemGroup>
+
 </Project>

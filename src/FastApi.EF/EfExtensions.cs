@@ -106,6 +106,13 @@ public static class EfExtensions
         return source.Set<T>().AsNoTracking()
             .FirstOrDefaultAsync(filter);
     }
+    
+    public static Task<T?> FindTracked<T>(this DbContext source, params object[] keyValues)
+        where T : class
+    {
+        var filter = source.FirstWithKeysExpression<T>(keyValues);
+        return source.Set<T>().FirstOrDefaultAsync(filter);
+    }
 
     public static Expression<Func<T, bool>> FirstWithKeysExpression<T>(this DbContext source,
         params object[] keyValues)
