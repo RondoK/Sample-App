@@ -1,7 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using Api.Tests.Fixtures;
 using App.Data.Models;
 using FluentAssertions;
+using SystemTextJsonPatch;
 using Xunit;
 
 namespace Api.Tests.EndpointBased.Aggregate;
@@ -74,6 +76,45 @@ public class AggregateCrud : ResetDbFixture, IClassFixture<ClientFixture>
         loaded.Should().BeEquivalentTo(updatedResponse);
         
         updatedResponse.Text.Should().NotBe(toCreate.Text);
+    }
+
+    [Fact]
+    public async Task Patch()
+    {
+        var toCreate = ValidNewAggRequest();
+        var created = await _server.Create(toCreate);
+
+        var updateText = created.Text += "patched";
+        var patch = new JsonPatchDocument<Agg>();
+        patch.Replace(a => a.Text, updateText);
+
+        var patchedResponse = await _server.Patch(created.Id, patch);
+
+        var loaded = await _server.GetById(created.Id);
+        
+        patchedResponse.Should().BeEquivalentTo(created, c => c.Excluding(e => e.Text));
+        patchedResponse.Text.Should().BeEquivalentTo(updateText);
+
+        loaded.Should().BeEquivalentTo(patchedResponse);
+    }
+
+
+    [Fact]
+    public async Task Patch_Id_Fails()
+    {
+        var toCreate = ValidNewAggRequest();
+        var created = await _server.Create(toCreate);
+        const int newId = int.MaxValue - 1;
+        
+        // Make sure that shared db doesn't have this entity
+        var withNewId = await _server.GetById(newId);
+        withNewId.Should().BeNull();
+        
+        var patch = new JsonPatchDocument<Agg>();
+        patch.Replace(a => a.Id, newId);
+        
+        var patchedResponse = await _server.OnlyPatch(created.Id, patch);
+        patchedResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     private static Agg ValidNewAggRequest()

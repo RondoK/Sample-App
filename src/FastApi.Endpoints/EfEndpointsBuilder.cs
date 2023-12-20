@@ -45,6 +45,17 @@ public static class EfEndpointsBuilder
                 //TODO: check id mismatch between url id and body id
                 TId id,
                 [FromBody] T entity) => context.SaveUpdateAsync(entity));
+        inner.MapPatch("",
+            async ([FromServices] DbContext context, [FromServices] NonEditableProperties patchValidation, TId id,
+                [FromBody] JsonPatchDocument<T> patch) =>
+            {
+                var stored = await context.FindTracked<T>(id!);
+                if (!patchValidation.IsValidPatch(patch))
+                    return Results.BadRequest();
+                patch.ApplyTo(stored!);
+                await context.SaveChangesAsync();
+                return Results.Ok(stored);
+            });
         return inner;
     }
 }

@@ -30,6 +30,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\FastApi.EF\FastApi.EF.csproj" />
+      <ProjectReference Include="..\..\src\FastApi.Endpoints\FastApi.Endpoints.csproj" />
     </ItemGroup>
 
 </Project>

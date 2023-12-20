@@ -1,10 +1,11 @@
 using System.Net.Http.Json;
 using App.Data.Models;
 using FastApi.Endpoints;
+using SystemTextJsonPatch;
 
 namespace Api.Tests.Fixtures;
 
-public class EndpointsGroup<T>
+public class EndpointsGroup<T> where T : class
 {
     private readonly string _baseUri;
     private readonly EndpointsRequestUri _endpointsUri;
@@ -25,7 +26,7 @@ public class EndpointsGroup<T>
 
     public async Task<T?> GetById<TId>(TId id)
     {
-        return await _api.GetFromJsonAsync<T>(_endpointsUri.GetById(id));
+        return await _api.GetFromJsonAsync<T>(_endpointsUri.IdBased(id));
     }
 
     public async Task<Agg[]?> GetAll()
@@ -44,6 +45,16 @@ public class EndpointsGroup<T>
         return await GetBodyOrException(response);
     }
 
+    public async Task<T> Patch<TId>(TId id, JsonPatchDocument<T> patch)
+    {
+        return await GetBodyOrException( await OnlyPatch(id, patch));
+    }
+    
+    public async Task<HttpResponseMessage> OnlyPatch<TId>(TId id, JsonPatchDocument<T> patch)
+    {
+        return await _api.PatchAsJsonAsync(_endpointsUri.IdBased(id), patch);
+    }
+
     private async Task<T> GetBodyOrException(HttpResponseMessage response)
     {
         if (!response.IsSuccessStatusCode)
@@ -55,11 +66,12 @@ public class EndpointsGroup<T>
             throw new Exception("Failed to create an item, response can't be casted");
         return result;
     }
- }
+}
 
 public static class EndpointsGroupExtension
 {
     public static EndpointsGroup<T> GetDefaultEndpoints<T>(this ClientFixture fixture, string baseUri)
+        where T : class
     {
         return new EndpointsGroup<T>(baseUri, fixture.Api);
     }

@@ -44,6 +44,8 @@ public static class ApiBuilder
         builder.Services.AddAuthorizationBuilder()
             .AddPolicy(Roles.Admin, policy => policy.RequireRole(Roles.Admin));
 
+        builder.Services.AddSingleton(Configs.CreateNonEditableConfig());
+
         return builder;
     }
 
