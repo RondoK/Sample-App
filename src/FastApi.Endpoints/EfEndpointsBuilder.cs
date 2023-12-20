@@ -1,19 +1,22 @@
 using System.ComponentModel.DataAnnotations;
 using FastApi.EF;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using SystemTextJsonPatch;
 
 namespace FastApi.Endpoints;
 
 public static class EfEndpointsBuilder
 {
-    public static IEndpointConventionBuilder MapGroupAndSingleActions<T>(this IEndpointRouteBuilder routeBuilder, string prefix)
+    public static IEndpointConventionBuilder MapGroupAndSingleActions<T, TId>(this IEndpointRouteBuilder routeBuilder,
+        string prefix)
         where T : class
     {
         var group = routeBuilder.MapGroup(prefix);
-        group.MapSingleItemGroup<T>();
+        group.MapSingleItemGroup<T, TId>();
         group.MapGroupActions<T>();
         return group;
     }
@@ -32,15 +35,15 @@ public static class EfEndpointsBuilder
         return group;
     }
 
-    public static RouteGroupBuilder MapSingleItemGroup<T>(this RouteGroupBuilder outer)
+    public static RouteGroupBuilder MapSingleItemGroup<T, TId>(this RouteGroupBuilder outer)
         where T : class
     {
         var inner = outer.MapGroup("/{id}");
-        inner.MapGet("", ([FromServices] DbContext context, int id) => context.FindNoTrackingAsync<T>(id));
+        inner.MapGet("", ([FromServices] DbContext context, TId id) => context.FindNoTrackingAsync<T>(id!));
         inner.MapPut("",
             ([FromServices] DbContext context,
                 //TODO: check id mismatch between url id and body id
-                int id, 
+                TId id,
                 [FromBody] T entity) => context.SaveUpdateAsync(entity));
         return inner;
     }
