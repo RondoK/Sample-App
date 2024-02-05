@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace App.Data.Models;
 
 public class Agg : IEquatable<Agg>
 {
+    [Key]
     public int Id { get; set; }
     public string? Text { get; set; }
 
