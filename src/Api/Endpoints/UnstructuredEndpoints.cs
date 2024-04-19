@@ -31,6 +31,5 @@ public static class UnstructuredEndpoints
         //var routes = app.MapGroup("v1");
         var routes = app;
         routes.MapGroupAndSingleActions<Agg, int>(Paths.Aggs); //.RequireAuthorization();
-
     }
 }

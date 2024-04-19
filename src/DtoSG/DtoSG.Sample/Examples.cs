@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using Entities;
+//using Entities;
 
 namespace DtoSG.Sample;
-
+/*
 public class Examples
 {
     // Create generated entities, based on DDD.UbiquitousLanguageRegistry.txt
@@ -26,3 +26,4 @@ public class Examples
         return entity.Report().Union(entity.Report());
     }
 }
+*/

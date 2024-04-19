@@ -63,7 +63,6 @@ public static class EfEndpointsBuilder
         where T : class =>
         group.MapPut(routePattern, (DbContext context, [FromBody] T entity) => context.SaveUpdateAsync(entity));
     
-    
     public class SingleEntityRoutes<T, TId> where T : class
     {
         public RouteGroupBuilder GroupBuilder { get; }
@@ -80,9 +79,9 @@ public static class EfEndpointsBuilder
         public RouteHandlerBuilder Put(string routePattern = "") =>
             GroupBuilder.MapPut("",
                 ([FromServices] DbContext context,
-                    //TODO: check id mismatch between url id and body id
                     TId id,
-                    [FromBody] T entity) => context.SaveUpdateAsync(entity));
+                    [FromBody] T entity) =>
+                    context.SaveUpdateAsync(entity));
 
         public RouteHandlerBuilder Patch(string routePattern = "") =>
             GroupBuilder.MapPatch("",
