@@ -15,6 +15,7 @@ using (var scope = host.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<Context>();
     db.Database.Migrate();
 }
+
 host.Run();
 
 
@@ -53,7 +54,7 @@ public static class ApiBuilder
     {
         var factory = GetParamsFactory(builder.Configuration);
         builder.Services.AddSingleton(factory.CreateModelCreatingOptions());
-        builder.Services.AddDbContext<DbContext,Context>(factory.BuildOptionsDelegate());
+        builder.Services.AddDbContext<DbContext, Context>(factory.BuildOptionsDelegate());
     }
 
     private static IEfContextParamsFactory GetParamsFactory(IConfiguration configuration)
@@ -64,7 +65,7 @@ public static class ApiBuilder
         var connectionString = configuration.GetConnectionString(provider);
         if (connectionString == null)
             throw new Exception("Missing connection string named " + provider);
-        
+
         return provider switch
         {
             "Sqlite" => new SqliteContextParamsFactory(connectionString),
@@ -88,7 +89,7 @@ public static class ApiBuilder
         /*
         app.UseHttpsRedirection();
         app.UseHsts()
-        
+
         app.UseAuthentication();
         app.UseAuthorization();
 
