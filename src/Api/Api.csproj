@@ -9,6 +9,7 @@
         <DockerfileContext>..\..</DockerfileContext>
         <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
         <GenerateProgramFile>false</GenerateProgramFile>
+        <LangVersion>13</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
