@@ -6,7 +6,6 @@
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
         <GenerateProgramFile>false</GenerateProgramFile>
-        <LangVersion>13</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
