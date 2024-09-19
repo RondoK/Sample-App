@@ -26,11 +26,13 @@ public static class UnstructuredEndpoints
 
 
         
-        // app endpoints can be wrapped to add a url part before already defined url 
+        // app endpoints can be wrapped to add an url part before already defined url 
         // use case: Add version to an api 
         //var routes = app.MapGroup("v1");
         var routes = app;
         routes.MapGroupAndSingleActions<Agg, int>(Paths.Aggs); //.RequireAuthorization();
+
+        routes.MapGroupAndSingleActions<Project, int>(Paths.Project);
 
     }
 }

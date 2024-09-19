@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using App.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -19,6 +20,7 @@ public class ApiWebApplicationFactory : WebApplicationFactory<TestProgram>, IAsy
         .Build();
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        Debug.WriteLine("Api Web Web Application factory");
         var configuration = new ConfigurationBuilder()
             .AddJsonFile("testsettings.json")
             .AddInMemoryCollection(new Dictionary<string, string?>()
@@ -41,11 +43,13 @@ public class ApiWebApplicationFactory : WebApplicationFactory<TestProgram>, IAsy
 
     public async Task InitializeAsync()
     {
+        Debug.WriteLine("Api Web Web Application factory init");
         await _postgres.StartAsync();
     }
 
     public new async Task DisposeAsync()
     {
+        Debug.WriteLine("Api Web Web Application factory dispose");
         await _postgres.StopAsync();
     }
 }

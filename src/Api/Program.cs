@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Api;
 using Api.Endpoints;
 using App.Data;
@@ -54,7 +55,14 @@ public static class ApiBuilder
     {
         var factory = GetParamsFactory(builder.Configuration);
         builder.Services.AddSingleton(factory.CreateModelCreatingOptions());
-        builder.Services.AddDbContext<DbContext, Context>(factory.BuildOptionsDelegate());
+        //.LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information);
+        var optionsWrapper = (DbContextOptionsBuilder b) =>
+        {
+            var deleg = factory.BuildOptionsDelegate();
+            deleg(b);
+            b.LogTo(Console.WriteLine, LogLevel.Critical);
+        };
+        builder.Services.AddDbContext<DbContext, Context>(optionsWrapper);
     }
 
     private static IEfContextParamsFactory GetParamsFactory(IConfiguration configuration)

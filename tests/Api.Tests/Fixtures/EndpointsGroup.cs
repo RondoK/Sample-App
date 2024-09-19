@@ -29,14 +29,15 @@ public class EndpointsGroup<T> where T : class
         return await _api.GetFromJsonAsync<T>(_endpointsUri.IdBased(id));
     }
 
-    public async Task<Agg[]?> GetAll()
+    public async Task<T[]?> GetAll()
     {
-        return await _api.GetFromJsonAsync<Agg[]>(_endpointsUri.GetAll());
+        return await _api.GetFromJsonAsync<T[]>(_endpointsUri.GetAll());
     }
 
-    public async Task<Agg[]?> GetPaged(int page, int pageSize)
+    public async Task<T[]?> GetPaged(int page, int pageSize)
     {
-        return await _api.GetFromJsonAsync<Agg[]>(_endpointsUri.GetPaged(page, pageSize));
+        //TODO: handle better 400 response. Can't se an error right now
+        return await _api.GetFromJsonAsync<T[]>(_endpointsUri.GetPaged(page, pageSize));
     }
 
     public async Task<T> Update(T updated)

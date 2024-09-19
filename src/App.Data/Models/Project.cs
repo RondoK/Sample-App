@@ -1,25 +1,30 @@
-namespace App.Data.Models;
+using System.ComponentModel.DataAnnotations;
 
+namespace App.Data.Models;
+//TODO : think about how to use other datatype for these parameters
 public interface IHaveCreateInfo
 {
     Guid CreatedBy { get; set; }
     DateTimeOffset CreatedAt { get; set; }
 }
 
+//TODO : think about how to use other datatype for these parameters
 public interface IHaveUpdateInfo
 {
     Guid UpdatedBy { get; set; }
     DateTimeOffset LastUpdatedAt { get; set; }
 }
 
-public interface IHaveId<T>
+public interface IHaveId<T> 
 {
     T Id { get; set; }
 }
 
+//TODO : rename to BasicEntity
 public abstract class BaseEntity: IHaveId<int>, IHaveCreateInfo, IHaveUpdateInfo
 {
     public int Id { get; set; }
+
     public Guid CreatedBy { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     
@@ -27,12 +32,10 @@ public abstract class BaseEntity: IHaveId<int>, IHaveCreateInfo, IHaveUpdateInfo
     public DateTimeOffset LastUpdatedAt { get; set; }
 }
 
-
-
 public class Project : BaseEntity
 {
     public string Title { get; set; }
-    public ICollection<DoTask> DoTasks { get; set; }
+    //public ICollection<DoTask> DoTasks { get; set; }
     public bool Active { get; set; }
     
     public Guid RowId { get; set; }
