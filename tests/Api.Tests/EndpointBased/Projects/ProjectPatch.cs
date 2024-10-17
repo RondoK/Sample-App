@@ -40,7 +40,7 @@ public class ProjectPatch : ResetDbFixture, IClassFixture<ClientFixture>
             (patched, created) => patched.Should().BeEquivalentTo(created,
                 x => x.Excluding(a => a.Title));
 
-        await CustomAsserts.Patch(
+        await TestPreset.Patch(
             newElement,
             _server,
             updatePatch,

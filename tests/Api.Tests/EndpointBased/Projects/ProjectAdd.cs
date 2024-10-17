@@ -24,17 +24,17 @@ public class ProjectAdd : ResetDbFixture, IClassFixture<ClientFixture>
     //TODO: Try Add AAA styled Code generation  or unwrapping function tool 
     [Fact, Priority(1)]
     public async Task ReturnsSameObjWithNewId() =>
-        await CustomAsserts.AddNew_ReturnsSameObjWithNewId<Project, int>(_fromClient, _server);
+        await TestPreset.AddNew_ReturnsSameObjWithNewId<Project, int>(_fromClient, _server);
 
     [Fact, Priority(2)]
     public async Task CanBeRetrievedById() =>
-        await CustomAsserts.AddNew_CanBeRetrievedById<Project, int>(_fromClient, _server);
+        await TestPreset.AddNew_CanBeRetrievedById<Project, int>(_fromClient, _server);
     
     [Fact, Priority(3)]
     public async Task CanBerRetrievedInPages() =>
-        await CustomAsserts.AddNew_CanBeRetrievedInPaged(_fromClient, _server, 10);
+        await TestPreset.AddNew_CanBeRetrievedInPaged(_fromClient, _server, 10);
 
     [Fact, Priority(4)]
     public async Task CanBeRetrievedInList() =>
-        await CustomAsserts.AddNew_CanBeRetrievedInList(_fromClient, _server);
+        await TestPreset.AddNew_CanBeRetrievedInList(_fromClient, _server);
 }

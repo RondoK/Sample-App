@@ -24,7 +24,7 @@ public class ProjectUpdate : ResetDbFixture, IClassFixture<ClientFixture>
     public async Task FullUpdateRetrievableById()
     {
         var newElement = Seeder.ProjectFaker.Generate(1).First();
-        await CustomAsserts.Update_FullUpdated(newElement,
+        await TestPreset.Update_FullUpdated(newElement,
             p => p.Title += " updated", _server);
     }
 }

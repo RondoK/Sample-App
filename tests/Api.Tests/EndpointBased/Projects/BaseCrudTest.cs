@@ -17,7 +17,7 @@ public static class ReadonlyTests
     }
 }
 
-public static class CustomAsserts
+public static class TestPreset
 {
     public static async Task AddNew_ReturnsSameObjWithNewId<T, TId>(T fromClient, EndpointsGroup<T> server)
         where T : BaseEntity
