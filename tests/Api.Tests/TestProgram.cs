@@ -35,6 +35,7 @@ public class TestProgram
 
 public static class Extensions
 {
+    public static async Task<HttpResponseMessage> Login(this HttpClient client) => await client.GetAsync(Paths.Login);
     public static async Task<HttpResponseMessage> MockedLogin(this HttpClient client, params string[] roles)
     {
         //TODO : find prettier way pass query params 

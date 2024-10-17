@@ -76,4 +76,10 @@ public static class EndpointsGroupExtension
     {
         return new EndpointsGroup<T>(baseUri, fixture.Api);
     }
+    
+    public static EndpointsGroup<T> GetDefaultEndpoints<T>(this HttpClient client, string baseUri)
+        where T : class
+    {
+        return new EndpointsGroup<T>(baseUri, client);
+    }
 }

@@ -1,11 +1,12 @@
+using Api.Tests.EndpointBased.Projects;
 using App.Data;
 using App.Data.Models;
 
-namespace Api.Tests.EndpointBased.Projects;
+namespace Api.Tests.Fixtures;
 
 public class Seeder
 {
-    public ProjectFaker ProjectFaker;
+    public readonly ProjectFaker ProjectFaker;
     public List<Project> Projects { get; }
 
     public Seeder()
