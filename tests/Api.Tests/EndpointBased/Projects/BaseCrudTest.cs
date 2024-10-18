@@ -15,16 +15,50 @@ public static class ReadonlyTests
 
         retrieved.Should().BeEquivalentTo(compareTo);
     }
+
+    public static async Task IsInPagedResponse<T>(EndpointsGroup<T> server, T entity, int pageSize = 10)
+        where T : BaseEntity
+    {
+        int pageNum = (entity.Id / pageSize) + 1;
+        await IsInPagedResponse(server, entity, pageNum, pageSize);
+    }
+
+    /// <summary>
+    /// </summary>
+    /// <param name="server"></param>
+    /// <param name="entity"></param>
+    /// <param name="pageNum">Starts from 1, because client code starts from 1</param>
+    /// <param name="pageSize"></param>
+    /// <typeparam name="T"></typeparam>
+    public static async Task IsInPagedResponse<T>(EndpointsGroup<T> server, T entity, int pageNum, int pageSize)
+        where T : BaseEntity
+    {
+        // What if an aggregate has default filtering criteria
+        // (like active or "belongs" to a specific user)
+        var retrieved = await server.GetPaged(pageNum, pageSize);
+        retrieved.Should().NotBeEmpty();
+        //TODO: recheck that it does comparison
+        retrieved.Should().ContainEquivalentOf(entity);
+    }
+
+    public static async Task IsInGetAllResponse<T>(EndpointsGroup<T> server, T entity)
+        where T : BaseEntity
+    {
+        var retrieved = await server.GetAll();
+        retrieved.Should().ContainEquivalentOf(entity);
+    }
 }
 
 public static class TestPreset
 {
-    public static async Task AddNew_ReturnsSameObjWithNewId<T, TId>(T fromClient, EndpointsGroup<T> server)
+    public static async Task<T> AddNew_ReturnsSameObjWithNewId<T, TId>(T fromClient, EndpointsGroup<T> server)
         where T : BaseEntity
     {
         var created = await server.Create(fromClient);
 
         created.AddNewAsserts<T, TId>(fromClient);
+
+        return created;
     }
 
     public static async Task AddNew_CanBeRetrievedById<T, TId>(T newElement, EndpointsGroup<T> server)
@@ -36,19 +70,12 @@ public static class TestPreset
 
     public static async Task AddNew_CanBeRetrievedInPaged<T>(T newElement,
         EndpointsGroup<T> server,
-        int pageSize
+        int pageSize = 10
     )
         where T : BaseEntity
     {
         var created = await server.Create(newElement);
-        //TODO: revisit.
-        // What if an aggregate has default filtering criteria
-        // (like active or "belongs" to a specific user)
-        var page = (created.Id / pageSize) + 1;
-        var retrieved = await server.GetPaged(page, pageSize);
-        retrieved.Should().NotBeEmpty();
-        //TODO: recheck that it does comparison
-        retrieved.Should().ContainEquivalentOf(created);
+        await ReadonlyTests.IsInPagedResponse(server, created, pageSize);
     }
 
     public static async Task AddNew_CanBeRetrievedInList<T>(T newElement, EndpointsGroup<T> server)
@@ -56,15 +83,13 @@ public static class TestPreset
     {
         {
             var created = await server.Create(newElement);
-            var retrieved = await server.GetAll();
-
-            retrieved.Should().ContainEquivalentOf(created);
+            await ReadonlyTests.IsInGetAllResponse(server, created);
         }
     }
 
     // Maybe should be a separate class with multiple select ?!? 
     // Creates a new value to make sure it is independent test suite
-    public static async Task Update_FullUpdated<T>(T newElement, 
+    public static async Task Update_FullUpdated<T>(T newElement,
         Action<T> updateAction,
         EndpointsGroup<T> server)
         where T : BaseEntity
@@ -83,7 +108,7 @@ public static class TestPreset
         EndpointsGroup<T> server,
         JsonPatchDocument<T> patchDoc,
         Action<T> checkPatchedProperties,
-        Action<T,T> comparePatchedResponseAndCreated)
+        Action<T, T> comparePatchedResponseAndCreated)
         where T : BaseEntity
     {
         var created = await server.Create(newElement);

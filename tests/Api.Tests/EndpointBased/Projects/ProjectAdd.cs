@@ -1,40 +1,44 @@
 using Api.Tests.Fixtures;
 using App.Data.Models;
 using Xunit;
-using Xunit.Abstractions;
 using Xunit.Priority;
 
 namespace Api.Tests.EndpointBased.Projects;
+public class ProjectAddFixture : OneServerPerClassFixture
+{
+    public Project CreatedProject { get; set; } = null!;
+}
 
 [TestCaseOrderer(PriorityOrderer.Name, PriorityOrderer.Assembly)]
-public class ProjectAdd : ResetDbFixture, IClassFixture<ClientFixture>
+public class ProjectAdd : IClassFixture<ProjectAddFixture>
 {
-    private readonly ClientFixture _fixture;
-    private readonly EndpointsGroup<Project> _server;
-    private readonly Project _fromClient;
+    private readonly ProjectAddFixture _fixture;
+    private readonly EndpointsGroup<Project> _server; 
+    private Project CreatedProject => _fixture.CreatedProject;
 
-    public ProjectAdd(ClientFixture fixture, ApiWebApplicationFactory factory, ITestOutputHelper helper) : base(factory, helper)
+    public ProjectAdd(ProjectAddFixture fixture)
     {
         _fixture = fixture;
-        _server = fixture.GetDefaultEndpoints<Project>(Paths.Project);
-
-        _fromClient = Seeder.ProjectFaker.Generate(1).First();
+        _server = fixture.LoggedInClient.GetDefaultEndpoints<Project>(Paths.Project);
     }
-
-    //TODO: Try Add AAA styled Code generation  or unwrapping function tool 
+    
     [Fact, Priority(1)]
-    public async Task ReturnsSameObjWithNewId() =>
-        await TestPreset.AddNew_ReturnsSameObjWithNewId<Project, int>(_fromClient, _server);
+    public async Task Created_ReturnsSameObjWithNewId()
+    {
+        var fromClient = _fixture.Seeder.ProjectFaker.Generate(1).First();
+        // Not sure that it looks good, but need to do extra volume testing of the tooling.
+        _fixture.CreatedProject = await TestPreset.AddNew_ReturnsSameObjWithNewId<Project, int>(fromClient, _server);
+    }
 
     [Fact, Priority(2)]
     public async Task CanBeRetrievedById() =>
-        await TestPreset.AddNew_CanBeRetrievedById<Project, int>(_fromClient, _server);
+        await ReadonlyTests.GetByIdAndCompare(_server, CreatedProject);
     
     [Fact, Priority(3)]
     public async Task CanBerRetrievedInPages() =>
-        await TestPreset.AddNew_CanBeRetrievedInPaged(_fromClient, _server, 10);
+        await ReadonlyTests.IsInPagedResponse(_server, CreatedProject);
 
     [Fact, Priority(4)]
     public async Task CanBeRetrievedInList() =>
-        await TestPreset.AddNew_CanBeRetrievedInList(_fromClient, _server);
+        await ReadonlyTests.IsInGetAllResponse(_server, CreatedProject);
 }
