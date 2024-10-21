@@ -6,29 +6,21 @@ namespace Api.Tests.Fixtures;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class OneServerPerClassFixture : IAsyncLifetime
 {
-    public TestApiFactory AppFactory { get; }
+    public TestApiFactory AppFactory { get; private set; }
     public HttpClient LoggedInClient { get; private set; }
-    
-    private readonly PostgreSqlContainer _postgres;
-    public Seeder Seeder { get; }
 
-    public OneServerPerClassFixture()
-    {
-        _postgres = new PostgreSqlBuilder()
-            .WithUsername("postgres")
-            .WithPassword("mysecretpassword")
-            .WithDatabase("the_app")
-            .Build();
-        AppFactory = new TestApiFactory(_postgres);
-        this.Seeder = new Seeder();
-    }
+    private PostgreSqlContainer _postgres;
+    public Seeder Seeder { get; private set; }
 
     public async Task InitializeAsync()
     {
-        await _postgres.StartAsync();
+        _postgres = await ChannelHolder.DbChannel.Reader.ReadAsync();
+        AppFactory = new TestApiFactory(_postgres);
+        Seeder = new Seeder();
+        
         await using var context = AppFactory.GetScopedContext();
         await context.Database.EnsureCreatedAsync();
-        this.Seeder.SeedContext(context);
+        Seeder.SeedContext(context);
 
         LoggedInClient = AppFactory.CreateClient();
         await LoggedInClient.Login();
@@ -36,6 +28,11 @@ public class OneServerPerClassFixture : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        await _postgres.StopAsync();
+        await using (var context = AppFactory.GetScopedContext())
+        {
+            await context.Database.EnsureDeletedAsync();
+        }
+
+        await ChannelHolder.DbChannel.Writer.WriteAsync(_postgres);
     }
 }
