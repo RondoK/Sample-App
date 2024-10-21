@@ -1,30 +1,49 @@
 using Api.Tests.Fixtures;
 using App.Data.Models;
+using FluentAssertions;
 using Xunit;
-using Xunit.Abstractions;
+using Xunit.Priority;
 
 namespace Api.Tests.EndpointBased.Projects;
 
-public class ProjectUpdate : ResetDbFixture, IClassFixture<ClientFixture>
+public class ProjectUpdateFixture : OneServerPerClassFixture
 {
-    private readonly ClientFixture _fixture;
+    public Project AfterUpdate { get; set; }
+}
+
+[TestCaseOrderer(PriorityOrderer.Name, PriorityOrderer.Assembly)]
+public class ProjectUpdate : IClassFixture<ProjectUpdateFixture>
+{
+    private readonly ProjectUpdateFixture _fixture;
     private readonly EndpointsGroup<Project> _server;
-    private readonly Project _fromClient;
 
-    public ProjectUpdate(ClientFixture fixture, ApiWebApplicationFactory factory, ITestOutputHelper helper) : base(factory, helper)
+    public ProjectUpdate(ProjectUpdateFixture fixture)
     {
-        helper.WriteLine("Project Update Start");
         _fixture = fixture;
-        _server = fixture.GetDefaultEndpoints<Project>(Paths.Project);
-
-        _fromClient = Seeder.ProjectFaker.Generate(1).First();
+        _server = fixture.LoggedInClient.GetDefaultEndpoints<Project>(Paths.Project);
     }
 
-    [Fact]
-    public async Task FullUpdateRetrievableById()
+    [Fact, Priority(1)]
+    public async Task FullUpdate_ReturnsUpdated()
     {
-        var newElement = Seeder.ProjectFaker.Generate(1).First();
-        await TestPreset.Update_FullUpdated(newElement,
-            p => p.Title += " updated", _server);
+        var projects = _fixture.Seeder.Projects;
+        var beforeUpdate = projects[projects.Count / 2];
+        
+        var fromClient = beforeUpdate.ShallowClone<Project>();
+        fromClient.Title = beforeUpdate.Title + " updated";
+        
+        var updatedResponse = await _server.Update(fromClient);
+
+        updatedResponse.Should().BeEquivalentTo(fromClient);
+
+        _fixture.AfterUpdate = updatedResponse;
+    }
+
+    [Fact, Priority(2)]
+    public async Task GetById_ReturnsUpdated()
+    {
+        var loaded = await _server.GetById(_fixture.AfterUpdate.Id);
+
+        loaded.Should().BeEquivalentTo(_fixture.AfterUpdate);
     }
 }

@@ -30,6 +30,11 @@ public abstract class BaseEntity: IHaveId<int>, IHaveCreateInfo, IHaveUpdateInfo
     
     public Guid UpdatedBy { get; set; }
     public DateTimeOffset LastUpdatedAt { get; set; }
+    
+    public T ShallowClone<T>() where T: BaseEntity
+    {
+        return (T)MemberwiseClone();
+    }
 }
 
 public class Project : BaseEntity
