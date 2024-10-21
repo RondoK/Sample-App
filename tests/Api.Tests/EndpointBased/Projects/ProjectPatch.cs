@@ -4,48 +4,52 @@ using FluentAssertions;
 using FluentAssertions.Equivalency;
 using SystemTextJsonPatch;
 using Xunit;
-using Xunit.Abstractions;
+using Xunit.Priority;
 
 namespace Api.Tests.EndpointBased.Projects;
 
-public class ProjectPatch : ResetDbFixture, IClassFixture<ClientFixture>
+public class ProjectPatchFixture : OneServerPerClassFixture
 {
-    private readonly ClientFixture _fixture;
-    private readonly EndpointsGroup<Project> _server;
-    private readonly Project _fromClient;
+    public Project BeforePatch { get; set; }
+    public Project AfterPatch { get; set; }
+}
 
-    public ProjectPatch(ClientFixture fixture, ApiWebApplicationFactory factory, ITestOutputHelper helper) : base(factory, helper)
+[TestCaseOrderer(PriorityOrderer.Name, PriorityOrderer.Assembly)]
+public class ProjectPatch : IClassFixture<ProjectPatchFixture>
+{
+    private readonly ProjectPatchFixture _fixture;
+    private readonly EndpointsGroup<Project> _server;
+
+    public ProjectPatch(ProjectPatchFixture fixture)
     {
         _fixture = fixture;
-        _server = fixture.GetDefaultEndpoints<Project>(Paths.Project);
-
-        _fromClient = Seeder.ProjectFaker.Generate(1).First();
+        _server = fixture.LoggedInClient.GetDefaultEndpoints<Project>(Paths.Project);
     }
 
-    [Fact]
-    public async Task ProjectPatched()
+    [Fact, Priority(1)]
+    public async Task ProjectPatch_ResponsePatched()
     {
-        // Too bulky, 
-        var newElement = Seeder.ProjectFaker.Generate(1).First();
-
-        var newTitle = newElement.Title + " updated";
+        var projects = _fixture.Seeder.Projects;
+        _fixture.BeforePatch = projects[projects.Count / 2];
+        
+        var newTitle = _fixture.BeforePatch.Title + " updated";
         var updatePatch = new JsonPatchDocument<Project>();
         updatePatch.Replace(a => a.Title, newTitle);
 
         var excludeChangedProperties = new EquivalencyAssertionOptions<Project>();
         excludeChangedProperties.Excluding(x => x.Title);
+        
+        var patchedResponse = await _server.Patch(_fixture.BeforePatch.Id, updatePatch);
+        patchedResponse.Title.Should().Be(newTitle);
+        patchedResponse.Should().BeEquivalentTo(_fixture.BeforePatch, x => x.Excluding(x => x.Title));
 
-        Action<Project> checkPatchedProperties = (patch) => patch.Title.Should().Be(newTitle);
-        Action<Project, Project> comparePatchedResponseAndCreated =
-            (patched, created) => patched.Should().BeEquivalentTo(created,
-                x => x.Excluding(a => a.Title));
+        _fixture.AfterPatch = patchedResponse;
+    }
 
-        await TestPreset.Patch(
-            newElement,
-            _server,
-            updatePatch,
-            checkPatchedProperties,
-            comparePatchedResponseAndCreated
-        );
+    [Fact, Priority(2)]
+    public async Task GetPatchedById_IsPatched()
+    {
+        var loaded = await _server.GetById(_fixture.BeforePatch.Id);
+        loaded.Should().BeEquivalentTo(_fixture.AfterPatch);
     }
 }
