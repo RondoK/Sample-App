@@ -16,7 +16,7 @@ public class TestProgram
 
     private static WebApplication CreateApp(params string[] args)
     {
-        // For some reasons Rider passes old path for the project
+        // For some reason Rider passes old path for the project
         var envParams = args.Where(a => !a.Contains("--contentRoot")).ToArray();
         var app = ApiBuilder.AddServices(envParams).Build();
         ApiBuilder.ConfigureMiddleware(app);
