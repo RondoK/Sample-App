@@ -13,12 +13,10 @@ namespace Api.Tests.EndpointBased.Aggregate;
     "xUnit1033:Test classes decorated with \'Xunit.IClassFixture<TFixture>\' or \'Xunit.ICollectionFixture<TFixture>\' should add a constructor argument of type TFixture")]
 public class AggregateCrud : ResetDbFixture, IClassFixture<ClientFixture>
 {
-    private readonly ClientFixture _fixture;
     private readonly EndpointsGroup<Agg> _server;
 
     public AggregateCrud(ClientFixture fixture, ApiWebApplicationFactory factory, ITestOutputHelper helper) : base(factory, helper)
     {
-        _fixture = fixture;
         _server = fixture.GetDefaultEndpoints<Agg>(Paths.Aggs);
     }
 

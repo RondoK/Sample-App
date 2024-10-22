@@ -1,7 +1,6 @@
 using Api.Tests.Fixtures;
 using App.Data.Models;
 using FluentAssertions;
-using FluentAssertions.Equivalency;
 using SystemTextJsonPatch;
 
 namespace Api.Tests.EndpointBased.Projects;
@@ -120,10 +119,9 @@ public static class TestPreset
         comparePatchedResponseAndCreated(patchedResponse, created);
         loaded.Should().BeEquivalentTo(patchedResponse);
     }
-
+/*
     private static async Task PatchId_Fail()
     {
-        /*
         var toCreate = ValidNewAggRequest();
         var created = await _server.Create(toCreate);
         const int newId = int.MaxValue - 1;
@@ -137,6 +135,6 @@ public static class TestPreset
 
         var patchedResponse = await _server.OnlyPatch(created.Id, patch);
         patchedResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        */
     }
+*/
 }

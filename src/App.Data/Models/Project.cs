@@ -39,13 +39,13 @@ public abstract class BaseEntity: IHaveId<int>, IHaveCreateInfo, IHaveUpdateInfo
 
 public class Project : BaseEntity
 {
-    public string Title { get; set; }
+    public required string Title { get; set; }
     //public ICollection<DoTask> DoTasks { get; set; }
-    public bool Active { get; set; }
+    public required bool Active { get; set; }
     
-    public Guid RowId { get; set; }
+    public required Guid RowId { get; set; }
 }
-
+/*
 public class DoTask : BaseEntity
 {
     public string Title { get; set; }
@@ -88,3 +88,4 @@ public class DoTaskStatus : IHaveId<int>
     
     public ICollection<DoTask> Tasks { get; set; }
 }
+*/
