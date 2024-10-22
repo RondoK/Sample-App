@@ -12,7 +12,7 @@ public class SeededInMemorySqliteFixture<T> : InMemorySqliteFixture, ISeededDbCo
     {
         var type = typeof(T);
         var dbSeed = typeof(DbSeed);
-        Seed = type == dbSeed ? new DbSeed() : throw new NotEmptyException();
+        Seed = type == dbSeed ? new DbSeed() : throw new Exception("Generic type is not DbSeed " + type);
         using var context = GetContext();
         Seed.Seed(context).Wait();
     }
