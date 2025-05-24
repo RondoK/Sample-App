@@ -6,6 +6,7 @@ namespace FastApi.EF.Tests.Fixtures;
 
 public class InMemorySqliteFixture : IDbContextFixture
 {
+    //TODO: figure out what was the issue, probably the issue described in EfDesignTimeFactory.cs
     private static int _dbNo;
     private static readonly object LockObj = new();
     //private const string _connectionString = "DataSource=file::memory:?cache=shared";

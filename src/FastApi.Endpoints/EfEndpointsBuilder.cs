@@ -21,6 +21,10 @@ public static class EfEndpointsBuilder
         return group;
     }
 
+    /// <summary>
+    /// Minimal Api endpoints with default(for this project) routes and FastApi Services.
+    /// Includes only actions over collection of entities (Get all, get paged, add one new, update)
+    /// </summary>
     public static RouteGroupBuilder MapGroupActions<T>(this RouteGroupBuilder group)
         where T : class
     {
@@ -32,6 +36,10 @@ public static class EfEndpointsBuilder
         return group;
     }
 
+    /// <summary>
+    /// Minimal Api endpoints with default(for this project) routes and FastApi Services.
+    /// Includes ONLY actions over SINGLE entity (get single entity, put single entity, patch single entity)
+    /// </summary>
     public static RouteGroupBuilder MapSingleItemGroup<T, TId>(this RouteGroupBuilder outer)
         where T : class
     {

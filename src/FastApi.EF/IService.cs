@@ -2,17 +2,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FastApi.EF;
 
-/*
- * We can use static methods directly in the MinimalApiEndpoints
- * or use some sort of IService with BaseService : IService
- * and OverridenService : BaseService
-*/
-
-//IService can be customized for your default MinimalApi setup
-
-/*
- * It is not IRepository, because I see it like something more than work with db
- */
+/// <summary>
+/// interface for Generic service
+/// </summary>
+/// <typeparam name="TEntity"></typeparam>
 public interface IService<TEntity>
 {
     Task<List<TEntity>> GetAll();
@@ -23,9 +16,13 @@ public interface IService<TEntity>
     Task<List<TEntity>> GetPaged(int page, int pageSize);
 }
 
+/// <summary>
+///  Generic service - wrapper over standalone extension actions of FastApi.EF
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public class GenericService<T> : IService<T> where T : class
 {
-    private DbContext _context;
+    private readonly DbContext _context;
 
     public GenericService(DbContext context)
     {

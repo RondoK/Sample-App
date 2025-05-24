@@ -11,7 +11,6 @@ public static class ChannelHolder
     static ChannelHolder()
     {
         var env = Environment.GetEnvironmentVariable("DB_COUNT");
-        Console.WriteLine("DB_COUNT PARAM " + env);
         if (!int.TryParse(env, out var count))
             count = 2;
         if (count < 1)
