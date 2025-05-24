@@ -36,7 +36,7 @@ public class EndpointsGroup<T> where T : class
 
     public async Task<T[]?> GetPaged(int page, int pageSize)
     {
-        //TODO: handle better 400 response. Can't se an error right now
+        //TODO: handle better 400/500 responses. Can't se an error right now
         return await _api.GetFromJsonAsync<T[]>(_endpointsUri.GetPaged(page, pageSize));
     }
 

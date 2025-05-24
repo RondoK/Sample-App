@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using FastApi.EF.Models;
 
 namespace App.Data.Models;
 //TODO : think about how to use other datatype for these parameters
@@ -15,12 +16,9 @@ public interface IHaveUpdateInfo
     DateTimeOffset LastUpdatedAt { get; set; }
 }
 
-public interface IHaveId<T> 
-{
-    T Id { get; set; }
-}
-
-//TODO : rename to BasicEntity
+// I don't like inheritance,
+// but i need to create multiple entities with same properties and behaviour
+// the fastest way to do, which I see right now is inheritance 
 public abstract class BaseEntity: IHaveId<int>, IHaveCreateInfo, IHaveUpdateInfo
 {
     public int Id { get; set; }

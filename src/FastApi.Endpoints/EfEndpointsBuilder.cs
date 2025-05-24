@@ -53,16 +53,20 @@ public static class EfEndpointsBuilder
          Looks like System.ComponentModel.DataAnnotations Range gives only hint in swagger,but no real validation
         */
         group.MapGet(routePattern,
-            async Task<IResult>(DbContext context, int page, /*[Range(1, 5)]*/ int pageSize) =>
+            async Task<IResult>([FromServices]IProvidePaged<T> provider, int page, /*[Range(1, 5)]*/ int pageSize) =>
             {
-                //TODO : add proper validation pattern
+                //TODO: add proper validation pattern
+                //TODO: make configurable 
                 if (pageSize < 1)
                     return TypedResults.BadRequest("Not valid page size. Page size expected to be > 1");
 
+                //TODO: add proper validation pattern
+                //TODO: make configurable 
                 if (pageSize > 10)
                     return TypedResults.BadRequest("Not valid page size. Page size expected to be < 11");
                 
-                return TypedResults.Ok(await context.GetPageAsync<T>(page, pageSize));
+                //TODO : Add ordering
+                return TypedResults.Ok(await provider.GetPageAsync(page, pageSize));
             });
 
     public static RouteHandlerBuilder AddOneNew<T>(this RouteGroupBuilder group, string routePattern = "/")

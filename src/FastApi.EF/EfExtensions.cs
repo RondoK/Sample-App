@@ -38,6 +38,23 @@ public static class EfExtensions
         return source.Set<T>().Paged(page, pageSize).ToListAsync();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <param name="queryModification">Allows to modify the query before use. For example ordering</param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static Task<List<T>> GetPageAsync<T>(this DbContext source, int page, int pageSize,
+        Func<IQueryable<T>, IQueryable<T>> queryModification)
+        where T : class
+    {
+        return queryModification(source.Set<T>()).Paged(page, pageSize).ToListAsync();
+    }
+
+
     public static Task<List<T>> GetAll<T>(this DbContext source)
         where T : class
     {
@@ -106,7 +123,7 @@ public static class EfExtensions
         return source.Set<T>().AsNoTracking()
             .FirstOrDefaultAsync(filter);
     }
-    
+
     public static Task<T?> FindTracked<T>(this DbContext source, params object[] keyValues)
         where T : class
     {
@@ -151,7 +168,7 @@ public static class EfExtensions
     {
         //TODO : think about caching the value, also caching(or strongly-typed key access) should solve potential multiple NRE here
         //TODO: check out how model keys search is implemented in Odata
-        return source.Model.FindEntityType(typeof(T))?.FindPrimaryKey()?.Properties.Select(p => p.PropertyInfo).ToArray() ?? 
+        return source.Model.FindEntityType(typeof(T))?.FindPrimaryKey()?.Properties.Select(p => p.PropertyInfo).ToArray() ??
                throw new Exception("Can't find key parameters for " + typeof(T));
     }
 }

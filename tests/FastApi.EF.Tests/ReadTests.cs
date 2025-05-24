@@ -24,6 +24,8 @@ public class ReadTests : BaseEfTest, IClassFixture<SeededInMemorySqliteFixture<D
     }
 
     [Fact]
+    // I don't have more tests because implementation is straight forward
+    // It would be nice to have more tests if implementation was more complex 
     public async Task GetPaged()
     {
         var expected = PreCreatedAggs.Skip(5).Take(5).ToArray();

@@ -2,9 +2,12 @@ using System.Diagnostics;
 using Api;
 using Api.Endpoints;
 using App.Data;
+using App.Data.Models;
 using App.Data.Postgres;
 using App.Data.Sqlite;
 using App.Data.SqlServer;
+using App.Services;
+using FastApi.EF;
 using Microsoft.EntityFrameworkCore;
 
 var host = ApiBuilder.CreateApp(args);
@@ -43,12 +46,21 @@ public static class ApiBuilder
             .AddCookie(CookieScheme);
         builder.AddEfContext();
         builder.Services.AddScoped<DbContext, Context>();
+        builder.AddDbServices();
         builder.Services.AddAuthorizationBuilder()
             .AddPolicy(Roles.Admin, policy => policy.RequireRole(Roles.Admin));
 
         builder.Services.AddSingleton(Configs.CreateNonEditableConfig());
 
         return builder;
+    }
+
+    //TODO : move it from here
+    private static void AddDbServices(this WebApplicationBuilder builder)
+    {
+        var services = builder.Services;
+        services.AddScoped<IProvidePaged<Project>, ProvidePaged<Project, int>>();
+        services.AddScoped<IProvidePaged<Agg>, AggService>();
     }
 
     private static void AddEfContext(this WebApplicationBuilder builder)
