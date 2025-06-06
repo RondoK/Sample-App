@@ -65,7 +65,8 @@ public static class ApiBuilder
     private static void AddEfContext(this WebApplicationBuilder builder)
     {
         var factory = GetParamsFactory(builder.Configuration);
-        builder.Services.AddSingleton(factory.CreateModelCreatingOptions());
+        builder.Services.AddSingleton<IConfigureModelCreating>(factory.CreateModelCreatingOptions());
+        builder.Services.AddDbContext<DbContext,Context>(factory.BuildOptionsDelegate());
         // TODO : Review and this code and delete comment  
         //.LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information);
         // var optionsWrapper = (DbContextOptionsBuilder b) =>
