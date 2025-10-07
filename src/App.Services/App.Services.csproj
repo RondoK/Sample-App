@@ -1,9 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <TargetFramework>net9.0</TargetFramework>
     </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\App.Data\App.Data.csproj" />
+      <ProjectReference Include="..\FastApi.EF\FastApi.EF.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Bcl.TimeProvider" Version="9.0.5" />
+    </ItemGroup>
 
 </Project>

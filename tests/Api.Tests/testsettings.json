@@ -6,8 +6,9 @@
   "Logging": {
     "LogLevel": {
       "Default": "Debug",
-      "System": "Information",
-      "Microsoft": "Information"
+      "System": "Debug",
+      "Microsoft": "Information",
+      "Microsoft.EntityFrameworkCore.Database.Command": "Warning"
     }
   }
 }

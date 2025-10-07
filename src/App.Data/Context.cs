@@ -7,6 +7,7 @@ public class Context : DbContext
 {
     private readonly IConfigureModelCreating _configure;
     public DbSet<Agg> Aggs { get; set; } = null!;
+    public DbSet<Project> Projects { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

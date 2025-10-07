@@ -1,0 +1,13 @@
+using App.Data.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace App.Data.Postgres.Configurations;
+
+public class ProjectConfiguration : IEntityTypeConfiguration<Project>
+{
+    public void Configure(EntityTypeBuilder<Project> builder)
+    {
+        builder.Property(x => x.Title).HasMaxLength(200);
+    }
+}

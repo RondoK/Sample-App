@@ -21,6 +21,10 @@ public static class EfEndpointsBuilder
         return group;
     }
 
+    /// <summary>
+    /// Minimal Api endpoints with default(for this project) routes and FastApi Services.
+    /// Includes only actions over collection of entities (Get all, get paged, add one new, update)
+    /// </summary>
     public static RouteGroupBuilder MapGroupActions<T>(this RouteGroupBuilder group)
         where T : class
     {
@@ -32,6 +36,10 @@ public static class EfEndpointsBuilder
         return group;
     }
 
+    /// <summary>
+    /// Minimal Api endpoints with default(for this project) routes and FastApi Services.
+    /// Includes ONLY actions over SINGLE entity (get single entity, put single entity, patch single entity)
+    /// </summary>
     public static RouteGroupBuilder MapSingleItemGroup<T, TId>(this RouteGroupBuilder outer)
         where T : class
     {
@@ -53,7 +61,21 @@ public static class EfEndpointsBuilder
          Looks like System.ComponentModel.DataAnnotations Range gives only hint in swagger,but no real validation
         */
         group.MapGet(routePattern,
-            (DbContext context, int page, [Range(1, 5)] int pageSize) => context.GetPageAsync<T>(page, pageSize));
+            async Task<IResult>([FromServices]IProvidePaged<T> provider, int page, /*[Range(1, 5)]*/ int pageSize) =>
+            {
+                //TODO: add proper validation pattern
+                //TODO: make configurable 
+                if (pageSize < 1)
+                    return TypedResults.BadRequest("Not valid page size. Page size expected to be > 1");
+
+                //TODO: add proper validation pattern
+                //TODO: make configurable 
+                if (pageSize > 10)
+                    return TypedResults.BadRequest("Not valid page size. Page size expected to be < 11");
+                
+                //TODO : Add ordering
+                return TypedResults.Ok(await provider.GetPageAsync(page, pageSize));
+            });
 
     public static RouteHandlerBuilder AddOneNew<T>(this RouteGroupBuilder group, string routePattern = "/")
         where T : class =>
